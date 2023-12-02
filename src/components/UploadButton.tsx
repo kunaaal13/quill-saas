@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogTrigger } from './ui/dialog'
 import { Button } from './ui/button'
+import UploadDropzone from './UploadDropzone'
 
 type UploadButtonProps = {}
 
@@ -20,7 +21,7 @@ function UploadButton({}: UploadButtonProps) {
       </DialogTrigger>
 
       <DialogContent>
-        Example content for the dialog. This can be anything you want, including
+        <UploadDropzone />
       </DialogContent>
     </Dialog>
   )

@@ -3,6 +3,9 @@ import { privateProcedure, publicProcedure, router } from './trpc'
 import { TRPCError } from '@trpc/server'
 import { db } from '@/db'
 import { z } from 'zod'
+import { UTApi } from 'uploadthing/server'
+
+const utapi = new UTApi()
 
 export const appRouter = router({
   // auth callback
@@ -78,9 +81,38 @@ export const appRouter = router({
         },
       })
 
+      // delete from uploadthing
+      await utapi.deleteFiles([file.key])
+
       return {
         success: true,
       }
+    }),
+
+  // get a file
+  getFile: privateProcedure
+    .input(
+      z.object({
+        key: z.string(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { userId } = ctx
+
+      const file = await db.file.findFirst({
+        where: {
+          key: input.key,
+          userId,
+        },
+      })
+
+      if (!file) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+        })
+      }
+
+      return file
     }),
 })
 // Export type router type signature,
