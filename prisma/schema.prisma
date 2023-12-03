@@ -20,7 +20,7 @@ model User {
   stripeCustomerId       String?   @unique @map("stripe_customer_id")
   stripeSubscriptionId   String?   @unique @map("stripe_subscription_id")
   stripePriceId          String?   @unique @map("stripe_price_id")
-  StripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end")
+  stripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end")
 }
 
 enum UploadStatus {
