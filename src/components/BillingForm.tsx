@@ -29,7 +29,7 @@ function BillingForm({ subscriptionPlan }: BillingFormProps) {
       },
     })
   return (
-    <MaxWidthWrapper className='max-w-5xl'>
+    <MaxWidthWrapper className='max-w-5xl mb-10'>
       {' '}
       <form
         className='mt-12'

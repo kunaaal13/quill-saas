@@ -12,16 +12,21 @@ import Image from 'next/image'
 import { Icons } from './Icons'
 import Link from 'next/link'
 import { Gem } from 'lucide-react'
-import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs'
+import { LogoutLink } from '@kinde-oss/kinde-auth-nextjs/server'
 
-type UserAccountNavProps = {
+interface UserAccountNavProps {
   email: string | undefined
   name: string
   imageUrl: string
 }
 
-async function UserAccountNav({ email, name, imageUrl }: UserAccountNavProps) {
+const UserAccountNav = async ({
+  email,
+  imageUrl,
+  name,
+}: UserAccountNavProps) => {
   const subscriptionPlan = await getUserSubscriptionPlan()
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className='overflow-visible'>
