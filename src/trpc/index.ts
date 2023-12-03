@@ -4,6 +4,7 @@ import { TRPCError } from '@trpc/server'
 import { db } from '@/db'
 import { z } from 'zod'
 import { UTApi } from 'uploadthing/server'
+import { INFINITE_QUERY_LIMIT } from '@/config/infinite-query'
 
 const utapi = new UTApi()
 
@@ -113,6 +114,85 @@ export const appRouter = router({
       }
 
       return file
+    }),
+
+  // get file upload status
+  getFileUploadStatus: privateProcedure
+    .input(
+      z.object({
+        fileId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const file = await db.file.findFirst({
+        where: {
+          id: input.fileId,
+          userId: ctx.userId,
+        },
+      })
+
+      if (!file) return { status: 'PENDING' as const }
+
+      return {
+        status: file.uploadStatus,
+      }
+    }),
+
+  // get file messages
+  getFileMessages: privateProcedure
+    .input(
+      z.object({
+        limit: z.number().min(1).max(100).nullish(),
+        cursor: z.string().nullish(),
+        fileId: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const { userId } = ctx
+      const { cursor, fileId } = input
+      const limit = input.limit ?? INFINITE_QUERY_LIMIT
+
+      const file = await db.file.findFirst({
+        where: {
+          id: fileId,
+          userId,
+        },
+      })
+
+      if (!file) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+        })
+      }
+
+      const messages = await db.message.findMany({
+        where: {
+          fileId,
+        },
+        orderBy: {
+          createdAt: 'desc',
+        },
+        cursor: cursor ? { id: cursor } : undefined,
+        take: limit + 1,
+        select: {
+          id: true,
+          text: true,
+          createdAt: true,
+          isUserMessage: true,
+        },
+      })
+
+      let nextCusror: typeof cursor | undefined = undefined
+
+      if (messages.length > limit) {
+        const nextItem = messages.pop()
+        nextCusror = nextItem?.id
+      }
+
+      return {
+        messages: messages,
+        nextCursor: nextCusror,
+      }
     }),
 })
 // Export type router type signature,
