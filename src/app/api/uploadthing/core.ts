@@ -75,7 +75,6 @@ export const ourFileRouter = {
           },
         })
       } catch (error) {
-        console.log(error)
         await db.file.update({
           data: {
             uploadStatus: 'FAILED',
@@ -89,5 +88,3 @@ export const ourFileRouter = {
 } satisfies FileRouter
 
 export type OurFileRouter = typeof ourFileRouter
-
-// 7:13:28

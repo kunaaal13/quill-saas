@@ -119,7 +119,5 @@ export async function POST(request: NextRequest) {
     },
   })
 
-  console.log('stream', stream)
-
   return new StreamingTextResponse(stream)
 }

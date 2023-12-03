@@ -15,7 +15,6 @@ function UpgradeButton({}: UpgradeButtonProps) {
   return (
     <Button
       onClick={() => {
-        console.log('clicked')
         createStripeSession()
       }}
       className='w-full'

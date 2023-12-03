@@ -36,8 +36,6 @@ function PdfRenderer({ url }: PdfRendererProps) {
   const [rotation, setRotation] = useState<number>(0)
   const [renderedScale, setRenderedScale] = useState<number | null>(null)
 
-  console.log(url)
-
   const isLoading = renderedScale !== scale
 
   const customPageValidator = z.object({
